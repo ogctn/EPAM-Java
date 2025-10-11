@@ -1,0 +1,37 @@
+package com.epam.rd.autotasks.figures;
+
+class Point {
+    private final double x;
+    private final double y;
+
+    public Point(final double x, final double y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Point(Point other) {
+        this.x = other.x;
+        this.y = other.y;
+    }
+
+    public double getX() { return (x); }
+    public double getY() { return (y); }
+
+    @Override
+    public String toString() { return ("(" + x + "," + y + ")"); }
+
+    public Point add(Point other) {
+        if (other != null) {
+            return (new Point(this.x + other.x, this.y + other.y));
+        }
+        return (new Point(this.x, this.y));
+    }
+
+    public Point subtract(Point other) {
+        if (other != null) {
+            return (new Point(this.x - other.x, this.y - other.y));
+        }
+        return (new Point(this.x, this.y));
+    }
+
+}
