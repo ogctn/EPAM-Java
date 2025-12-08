@@ -55,7 +55,7 @@ public class MovieQueries {
 
     public List<String> getFirstFourTitlesThatContainAtLeastTwoWords() {
         return movies.stream()
-                .filter(title -> title.trim().split("\\s+").length > 2)
+                .filter(title -> title.trim().split("\\s+").length >= 2)
                 .limit(4)
                 .collect(Collectors.toList());
     }
