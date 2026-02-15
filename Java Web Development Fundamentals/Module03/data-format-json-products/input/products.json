@@ -1,0 +1,250 @@
+[
+  {
+    "name": "white bread",
+    "producer": "ABC Bakery",
+    "amount": 1,
+    "unit": "loaf",
+    "value": 2.99,
+    "categories": ["bakery", "bread"]
+  },
+  {
+    "name": "whole wheat bread",
+    "producer": "XYZ Bakery",
+    "amount": 1,
+    "unit": "loaf",
+    "value": 3.49,
+    "categories": ["bakery", "bread"]
+  },
+  {
+    "name": "croissant",
+    "producer": "ABC Bakery",
+    "amount": 1,
+    "unit": "piece",
+    "value": 1.49,
+    "categories": ["bakery", "bread"]
+  },
+  {
+    "name": "apple pie",
+    "producer": "ABC Bakery",
+    "amount": 1,
+    "unit": "slice",
+    "value": 2.99,
+    "categories": ["bakery", "pastries"]
+  },
+  {
+    "name": "chocolate muffin",
+    "producer": "XYZ Bakery",
+    "amount": 1,
+    "unit": "piece",
+    "value": 1.99,
+    "categories": ["bakery", "pastries"]
+  },
+  {
+    "name": "cola",
+    "producer": "ABC Beverages",
+    "amount": 500,
+    "unit": "ml",
+    "value": 1.99,
+    "categories": ["drinks", "soft drinks"]
+  },
+  {
+    "name": "lemonade",
+    "producer": "XYZ Beverages",
+    "amount": 500,
+    "unit": "ml",
+    "value": 2.49,
+    "categories": ["drinks"]
+  },
+  {
+    "name": "orange soda",
+    "producer": "ABC Beverages",
+    "amount": 330,
+    "unit": "ml",
+    "value": 1.79,
+    "categories": []
+  },
+  {
+    "name": "orange juice",
+    "producer": "ABC Juices",
+    "amount": 1,
+    "unit": "L",
+    "value": 3.99,
+    "categories": ["drinks", "juices"]
+  },
+  {
+    "name": "apple juice",
+    "producer": "XYZ Juices",
+    "amount": 500,
+    "unit": "ml",
+    "value": 2.99,
+    "categories": ["drinks", "juices"]
+  },
+  {
+    "name": "grapefruit juice",
+    "producer": "ABC Juices",
+    "amount": 1,
+    "unit": "L",
+    "value": 4.49,
+    "categories": ["drinks", "juices"]
+  },
+  {
+    "name": "spinach",
+    "producer": "ABC Farms",
+    "amount": 250,
+    "unit": "g",
+    "value": 1.99,
+    "categories": ["vegetables", "leafy greens"]
+  },
+  {
+    "name": "kale",
+    "producer": "XYZ Farms",
+    "amount": 200,
+    "unit": "g",
+    "value": 2.49,
+    "categories": ["vegetables", "leafy greens"]
+  },
+  {
+    "name": "carrots",
+    "producer": "ABC Farms",
+    "amount": 500,
+    "unit": "g",
+    "value": 1.49,
+    "categories": ["vegetables", "root vegetables"]
+  },
+  {
+    "name": "potatoes",
+    "producer": "XYZ Farms",
+    "amount": 1,
+    "unit": "kg",
+    "value": 2.99,
+    "categories": ["vegetables", "root vegetables"]
+  },
+  {
+    "name": "chicken breast",
+    "producer": "ABC Farms",
+    "amount": 2,
+    "unit": "pieces",
+    "value": 5.99,
+    "categories": ["meat", "poultry"]
+  },
+  {
+    "name": "turkey thigh",
+    "producer": "XYZ Farms",
+    "amount": 1,
+    "unit": "piece",
+    "value": 4.99,
+    "categories": ["meat", "poultry"]
+  },
+  {
+    "name": "beef steak",
+    "producer": "ABC Farms",
+    "amount": 1,
+    "unit": "piece",
+    "value": 8.99,
+    "categories": ["meat", "red meat"]
+  },
+  {
+    "name": "lamb chops",
+    "producer": "XYZ Farms",
+    "amount": 4,
+    "unit": "pieces",
+    "value": 9.99,
+    "categories": ["meat", "red meat"]
+  },
+  {
+    "name": "milk chocolate",
+    "producer": "ABC Chocolates",
+    "amount": 100,
+    "unit": "g",
+    "value": 2.49,
+    "categories": ["sweets", "chocolates"]
+  },
+  {
+    "name": "dark chocolate",
+    "producer": "XYZ Chocolates",
+    "amount": 100,
+    "unit": "g",
+    "value": 2.99,
+    "categories": ["sweets", "chocolates"]
+  },
+  {
+    "name": "chocolate chip cookies",
+    "producer": "ABC Biscuits",
+    "amount": 12,
+    "unit": "pieces",
+    "value": 3.99,
+    "categories": ["sweets", "cookies"]
+  },
+  {
+    "name": "oatmeal raisin cookies",
+    "producer": "XYZ Biscuits",
+    "amount": 10,
+    "unit": "pieces",
+    "value": 3.49,
+    "categories": ["sweets"]
+  },
+  {
+    "name": "whole milk",
+    "producer": "ABC Dairy",
+    "amount": 1,
+    "unit": "L",
+    "value": 2.99,
+    "categories": ["dairy", "milk"]
+  },
+  {
+    "name": "skimmed milk",
+    "producer": "XYZ Dairy",
+    "amount": 1,
+    "unit": "L",
+    "value": 2.49,
+    "categories": ["dairy", "milk"]
+  },
+  {
+    "name": "cheddar cheese",
+    "producer": "ABC Dairy",
+    "amount": 250,
+    "unit": "g",
+    "value": 3.99,
+    "categories": ["dairy", "cheese"]
+  },
+  {
+    "name": "mozzarella cheese",
+    "producer": "XYZ Dairy",
+    "amount": 200,
+    "unit": "g",
+    "value": 4.49,
+    "categories": ["dairy", "cheese"]
+  },
+  {
+    "name": "oranges",
+    "producer": "ABC Farms",
+    "amount": 5,
+    "unit": "pieces",
+    "value": 2.99,
+    "categories": ["fruits", "citrus fruits"]
+  },
+  {
+    "name": "lemons",
+    "producer": "XYZ Farms",
+    "amount": 4,
+    "unit": "pieces",
+    "value": 1.99,
+    "categories": ["fruits", "citrus fruits"]
+  },
+  {
+    "name": "strawberries",
+    "producer": "ABC Farms",
+    "amount": 250,
+    "unit": "g",
+    "value": 3.49,
+    "categories": ["fruits", "berries"]
+  },
+  {
+    "name": "blueberries",
+    "producer": "XYZ Farms",
+    "amount": 125,
+    "unit": "g",
+    "value": 2.99,
+    "categories": ["fruits", "berries"]
+  }
+]
