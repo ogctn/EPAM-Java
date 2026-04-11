@@ -6,37 +6,30 @@ import java.util.List;
 import java.util.Objects;
 
 public class Cart {
-    private List<OrderItem> orderItems;
-    //the field price can be used later to add discounts, so it would differ from the sum of the OrderItems
-    private BigDecimal price;
 
-    public Cart() {
-    }
+    private List<OrderItem> orderItems = new ArrayList<>();
+    private BigDecimal price = BigDecimal.ZERO;
+
+    public Cart() {}
 
     private Cart(List<OrderItem> orderItems, BigDecimal price) {
         this.orderItems = orderItems;
         this.price = price;
     }
 
-    //this utility method is not part of the homework specification!
-    public static Cart getEmptyCart() {
-        return new Cart(new ArrayList<>(), BigDecimal.ZERO);
-    }
+    public static Cart getEmptyCart() { return new Cart(new ArrayList<>(), BigDecimal.ZERO); }
+    public List<OrderItem> getOrderItems() { return orderItems; }
+    public void setOrderItems(List<OrderItem> orderItems) { this.orderItems = orderItems; }
+    public BigDecimal getPrice() { return price; }
+    public void setPrice(BigDecimal price) { this.price = price; }
 
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
-    }
-
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void addOrderItem(OrderItem item) {
+        if (this.orderItems == null)
+            this.orderItems = new ArrayList<>();
+        if (this.price == null)
+            this.price = BigDecimal.ZERO;
+        this.orderItems.add(item);
+        this.price = this.price.add(item.getPrice());
     }
 
     @Override
@@ -50,8 +43,5 @@ public class Cart {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(orderItems, price);
-    }
-
+    public int hashCode() { return Objects.hash(orderItems, price); }
 }

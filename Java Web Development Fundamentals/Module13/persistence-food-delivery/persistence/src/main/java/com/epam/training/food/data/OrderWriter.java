@@ -29,8 +29,8 @@ public class OrderWriter {
                         order.getOrderItems(),
                         order.getPrice(),
                         order.getTimestampCreated(),
-                        order.getOrderId(),
-                        order.getCustomerId()
+                        order.getId(),
+                        order.getCustomer().getId()
                 ))
                 .collect(Collectors.joining("\n"));
     }

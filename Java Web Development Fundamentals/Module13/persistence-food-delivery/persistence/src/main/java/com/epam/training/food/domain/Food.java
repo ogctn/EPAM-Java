@@ -1,107 +1,63 @@
 package com.epam.training.food.domain;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+@Entity
 public class Food {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private String name;
+    private BigDecimal price;
     private BigDecimal calorie;
     private String description;
-    private BigDecimal price;
 
-    public Food() {
-    }
+    public Food() {}
 
-    public Food(String name, BigDecimal calorie, String description, BigDecimal price) {
+    public Food(Long id, String name, BigDecimal calorie, String description, BigDecimal price) {
+        this.id = id;
         this.name = name;
+        this.price = price;
         this.calorie = calorie;
         this.description = description;
-        this.price = price;
     }
 
-    public String getName() {
-        return name;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id;}
+    public String getName() { return name;    }
+    public void setName(String name) { this.name = name;    }
+    public BigDecimal getPrice() { return price;    }
+    public void setPrice(BigDecimal price) { this.price = price;    }
+    public BigDecimal getCalories() { return calorie; }
+    public void setCalories(BigDecimal calories) { this.calorie = calories;    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getCalorie() {
-        return calorie;
-    }
-
-    public void setCalorie(BigDecimal calorie) {
-        this.calorie = calorie;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    @Override public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         Food food = (Food) o;
-        return Objects.equals(name, food.name) && Objects.equals(calorie, food.calorie) && Objects.equals(description,
-            food.description) && Objects.equals(price, food.price);
+        return Objects.equals(id, food.id) &&
+                Objects.equals(name, food.name);
     }
 
-    @Override public int hashCode() {
-        return Objects.hash(name, calorie, description, price);
-    }
+    @Override
+    public int hashCode() { return Objects.hash(id, name); }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "Food{" +
-            "name='" + name + '\'' +
-            ", calorie=" + calorie +
-            ", description='" + description + '\'' +
-            ", price=" + price +
-            '}';
-    }
-
-    public static class Builder {
-        private String name;
-        private BigDecimal calorie;
-        private String description;
-        private BigDecimal price;
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder calorie(BigDecimal calorie) {
-            this.calorie = calorie;
-            return this;
-        }
-
-        public Builder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public Builder price(BigDecimal price) {
-            this.price = price;
-            return this;
-        }
-
-        public Food build() {
-            return new Food(name, calorie, description, price);
-        }
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                '}';
     }
 }
