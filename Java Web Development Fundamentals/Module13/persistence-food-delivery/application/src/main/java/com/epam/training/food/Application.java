@@ -1,6 +1,5 @@
 package com.epam.training.food;
 
-import com.epam.training.food.data.DataStore;
 import com.epam.training.food.domain.*;
 import com.epam.training.food.service.*;
 import com.epam.training.food.view.*;
@@ -10,13 +9,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Application implements CommandLineRunner {
+
     private final FoodDeliveryService service;
     private final View view;
-    private final DataStore dataStore;
 
-    public Application(FoodDeliveryService service, DataStore dataStore, View view) { //
+    public Application(FoodDeliveryService service, View view) {
         this.service = service;
-        this.dataStore = dataStore;
         this.view = view;
     }
 
@@ -24,7 +22,7 @@ public class Application implements CommandLineRunner {
         Credentials namePass = view.readCredentials();
         Customer customer = service.authenticate(namePass);
         view.printWelcomeMessage(customer);
-        return (customer);
+        return customer;
     }
 
     private void displayMenu() {
@@ -36,8 +34,11 @@ public class Application implements CommandLineRunner {
             FoodSelection selection = view.readFoodSelection(service.listAllFood());
 
             if (selection == FoodSelection.NONE) {
-                if (customer.getCart().getOrderItems().isEmpty())
+                if (customer.getCart() == null ||
+                        customer.getCart().getOrderItems() == null ||
+                        customer.getCart().getOrderItems().isEmpty()) {
                     continue;
+                }
                 break;
             }
             updateCart(customer, selection);
@@ -58,13 +59,11 @@ public class Application implements CommandLineRunner {
     private void printOrderCreated(Customer customer) {
         Order order = service.createOrder(customer);
         view.printOrderCreatedStatement(order, customer.getBalance());
-        dataStore.writeOrders();
     }
 
     @Override
     public void run(String... args) throws Exception {
         try {
-            dataStore.init();
             Customer customer = authentication();
             if (customer == null)
                 return;
@@ -80,4 +79,3 @@ public class Application implements CommandLineRunner {
         }
     }
 }
-

@@ -12,6 +12,11 @@ public class Credentials {
 
     public Credentials() {}
 
+    public Credentials(String username, String password) {
+        this.userName = username;
+        this.password = password;
+    }
+
     public String getUserName() { return userName; }
     public void setUserName(String email) { this.userName = email; }
     public String getPassword() { return password; }

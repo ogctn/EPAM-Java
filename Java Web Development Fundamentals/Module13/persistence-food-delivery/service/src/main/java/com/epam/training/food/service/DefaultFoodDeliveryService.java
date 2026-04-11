@@ -4,29 +4,40 @@ import com.epam.training.food.aspect.EnableArgumentLogging;
 import com.epam.training.food.aspect.EnableExecutionTimeLogging;
 import com.epam.training.food.aspect.EnableReturnValueLogging;
 import com.epam.training.food.domain.*;
-import com.epam.training.food.service.AuthenticationException;
-import com.epam.training.food.service.FoodDeliveryService;
-import com.epam.training.food.service.LowBalanceException;
-import org.springframework.stereotype.Component;
+import com.epam.training.food.repository.CustomerRepository;
+import com.epam.training.food.repository.FoodRepository;
+import com.epam.training.food.repository.OrderRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-//
-//import java.math.BigDecimal;
-//import java.util.ArrayList;
-//import java.util.Arrays;
-//import java.util.List;
-//import java.util.Optional;
-//
-@Component
+@Service
 public class DefaultFoodDeliveryService implements FoodDeliveryService {
+
+    private final CustomerRepository customerRepository;
+    private final FoodRepository foodRepository;
+    private final OrderRepository orderRepository;
+
+    public DefaultFoodDeliveryService(CustomerRepository customerRepository,
+                                      FoodRepository foodRepository,
+                                      OrderRepository orderRepository) {
+        this.customerRepository = customerRepository;
+        this.foodRepository = foodRepository;
+        this.orderRepository = orderRepository;
+    }
 
     @Override
     @EnableArgumentLogging
     @EnableReturnValueLogging
     @EnableExecutionTimeLogging
+    @Transactional(readOnly = true)
     public Customer authenticate(Credentials credentials) throws AuthenticationException {
-        return dataStore.getCustomers().stream()
+        return customerRepository.findAll().stream()
                 .filter(c -> c.getUserName().equals(credentials.getUserName()) &&
                         c.getPassword().equals(credentials.getPassword()))
                 .findFirst()
@@ -34,109 +45,106 @@ public class DefaultFoodDeliveryService implements FoodDeliveryService {
     }
 
     @Override
+    @EnableReturnValueLogging
+    @EnableExecutionTimeLogging
+    @Transactional(readOnly = true)
     public List<Food> listAllFood() {
-        return List.of();
+        return foodRepository.findAll();
+    }
+
+    private Optional<OrderItem> getItemInCart(Cart cart, Food food) {
+        if (cart.getOrderItems() == null) return Optional.empty();
+        return cart.getOrderItems().stream()
+                .filter(item -> item.getFood().getName().equals(food.getName()))
+                .findFirst();
+    }
+
+    private void validateUCartArgs(Customer customer, Food food, int pieces) {
+        if (pieces < 0)
+            throw new IllegalArgumentException("Pieces negative");
+
+        boolean exists = getItemInCart(customer.getCart(), food).isPresent();
+        if (pieces == 0 && !exists)
+            throw new IllegalArgumentException("!");
+    }
+
+    private void checkBalance(Customer customer, Food food, BigDecimal newItemPrice) {
+        BigDecimal othersTotal = BigDecimal.ZERO;
+        if (customer.getCart().getOrderItems() != null) {
+            othersTotal = customer.getCart().getOrderItems().stream()
+                    .filter(item -> !item.getFood().getName().equals(food.getName()))
+                    .map(OrderItem::getPrice)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+        }
+
+        if (othersTotal.add(newItemPrice).compareTo(customer.getBalance()) > 0) {
+            throw new LowBalanceException("Unable to add current order for " + food.getName() + ", as with current cart content it would exceed available balance!");
+        }
+    }
+
+    private void recalculateCartTotal(Cart cart) {
+        if (cart.getOrderItems() == null) {
+            cart.setPrice(BigDecimal.ZERO);
+            return;
+        }
+        cart.setPrice(cart.getOrderItems().stream()
+                .map(OrderItem::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
     }
 
     @Override
     public void updateCart(Customer customer, Food food, int pieces) throws LowBalanceException {
+        if (customer.getCart() == null) customer.setCart(new Cart());
+        Cart cart = customer.getCart();
+        if (cart.getOrderItems() == null) cart.setOrderItems(new ArrayList<>());
 
+        validateUCartArgs(customer, food, pieces);
+        Optional<OrderItem> existing = getItemInCart(cart, food);
+
+        if (pieces == 0) {
+            existing.ifPresent(item -> cart.getOrderItems().remove(item));
+        } else {
+            BigDecimal newItemPrice = food.getPrice().multiply(BigDecimal.valueOf(pieces));
+            checkBalance(customer, food, newItemPrice);
+
+            if (existing.isPresent()) {
+                existing.get().setPieces(pieces);
+                existing.get().setPrice(newItemPrice);
+            } else {
+                OrderItem newItem = new OrderItem();
+                newItem.setFood(food);
+                newItem.setPieces(pieces);
+                newItem.setPrice(newItemPrice);
+                cart.getOrderItems().add(newItem);
+            }
+        }
+        recalculateCartTotal(cart);
     }
 
     @Override
+    @Transactional
     public Order createOrder(Customer customer) throws IllegalStateException {
-        return null;
-    }
-//
-//    private final FileDataStore dataStore;
-//
-//    public DefaultFoodDeliveryService(FileDataStore fileDataStore) {
-//        this.dataStore = fileDataStore;
-//    }
-//
+        Cart cart = customer.getCart();
+        if (cart == null || cart.getOrderItems() == null || cart.getOrderItems().isEmpty())
+            throw new IllegalStateException("Empty card");
 
-//
-//    @Override
-//    @EnableReturnValueLogging
-//    @EnableExecutionTimeLogging
-//    public List<Food> listAllFood() {
-//        return dataStore.getFoods();
-//    }
-//
-//
-//    private Optional<OrderItem> getItemInCart(Cart cart, Food food) {
-//        return cart.getOrderItems().stream()
-//                .filter(item -> item.getFood().getName().equals(food.getName()))
-//                .findFirst();
-//    }
-//
-//    private void validateUCartArgs(Customer customer, Food food, int pieces) {
-//        if (pieces < 0)
-//            throw (new IllegalArgumentException("Pieces negative"));
-//
-//        boolean exists = getItemInCart(customer.getCart(), food).isPresent();
-//        if (pieces == 0 && !exists)
-//            throw (new IllegalArgumentException("!"));
-//    }
-//
-//    private void checkBalance(Customer customer, Food food, BigDecimal newItemPrice) {
-//        BigDecimal othersTotal = customer.getCart().getOrderItems().stream()
-//                .filter(item -> !item.getFood().getName().equals(food.getName()))
-//                .map(OrderItem::getPrice)
-//                .reduce(BigDecimal.ZERO, BigDecimal::add);
-//
-//        if (othersTotal.add(newItemPrice).compareTo(customer.getBalance()) > 0) {
-//            throw (new LowBalanceException("Unable to add current order for " + food + ", as with current cart content it would exceed available balance!"));
-//        }
-//    }
-//
-//    private void recalculateCartTotal(Cart cart) {
-//        cart.setPrice(cart.getOrderItems().stream()
-//                .map(OrderItem::getPrice)
-//                .reduce(BigDecimal.ZERO, BigDecimal::add));
-//    }
-//
-//    @Override
-//    public void updateCart(Customer customer, Food food, int pieces) throws LowBalanceException {
-//        validateUCartArgs(customer, food, pieces);
-//
-//        Cart cart = customer.getCart();
-//        Optional<OrderItem> existing = getItemInCart(cart, food);
-//
-//        if (pieces == 0) {
-//            cart.getOrderItems().remove(existing.get());
-//        } else {
-//            BigDecimal newItemPrice = food.getPrice().multiply(BigDecimal.valueOf(pieces));
-//            checkBalance(customer, food, newItemPrice);
-//
-//            if (existing.isPresent()) {
-//                existing.get().setPieces(pieces);
-//                existing.get().setPrice(newItemPrice);
-//            } else {
-//                customer.getCart().getOrderItems().add(new OrderItem(food, pieces, newItemPrice));
-//            }
-//        }
-//        recalculateCartTotal(cart);
-//    }
-//
-//
-//    @Override
-//    public Order createOrder(Customer customer) throws IllegalStateException {
-//        Cart cart = customer.getCart();
-//        if (cart == null || cart.getOrderItems() == null || cart.getOrderItems().isEmpty())
-//            throw (new IllegalStateException("Empty card"));
-//
-//        Order newOrder = new Order(customer);
-//
-//        dataStore.createOrder(newOrder);
-//
-//        customer.getOrders().add(newOrder);
-//
-//        customer.setBalance(customer.getBalance().subtract(newOrder.getPrice()));
-//
-//        cart.setOrderItems(new ArrayList<>());
-//        cart.setPrice(BigDecimal.ZERO);
-//
-//        return (newOrder);
-//    }
+        Order newOrder = new Order();
+        newOrder.setCustomer(customer);
+        newOrder.setPrice(cart.getPrice());
+        newOrder.setTimestamp(LocalDateTime.now());
+
+        for (OrderItem cartItem : cart.getOrderItems()) {
+            cartItem.setOrder(newOrder);
+            newOrder.getOrderItems().add(cartItem);
+        }
+
+        customer.setBalance(customer.getBalance().subtract(newOrder.getPrice()));
+        customerRepository.save(customer);
+        Order savedOrder = orderRepository.save(newOrder);
+
+        cart.setOrderItems(new ArrayList<>());
+        cart.setPrice(BigDecimal.ZERO);
+
+        return savedOrder;
+    }
 }
