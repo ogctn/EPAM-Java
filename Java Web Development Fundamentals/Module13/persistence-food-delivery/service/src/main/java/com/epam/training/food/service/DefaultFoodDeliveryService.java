@@ -69,12 +69,12 @@ public class DefaultFoodDeliveryService implements FoodDeliveryService {
     }
 
     private void checkBalance(Customer customer, Food food, BigDecimal newItemPrice) {
-        BigDecimal othersTotal = BigDecimal.ZERO;
+        BigDecimal othersTotal = BigDecimal.ZERO.setScale(2);
         if (customer.getCart().getOrderItems() != null) {
             othersTotal = customer.getCart().getOrderItems().stream()
                     .filter(item -> !item.getFood().getName().equals(food.getName()))
                     .map(OrderItem::getPrice)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .reduce(BigDecimal.ZERO.setScale(2), BigDecimal::add);
         }
 
         if (othersTotal.add(newItemPrice).compareTo(customer.getBalance()) > 0) {
@@ -83,13 +83,16 @@ public class DefaultFoodDeliveryService implements FoodDeliveryService {
     }
 
     private void recalculateCartTotal(Cart cart) {
-        if (cart.getOrderItems() == null) {
-            cart.setPrice(BigDecimal.ZERO);
+        if (cart.getOrderItems() == null || cart.getOrderItems().isEmpty()) {
+            cart.setPrice(BigDecimal.ZERO.setScale(2));
             return;
         }
-        cart.setPrice(cart.getOrderItems().stream()
-                .map(OrderItem::getPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add));
+
+        cart.setPrice(
+                cart.getOrderItems().stream()
+                        .map(OrderItem::getPrice)
+                        .reduce(BigDecimal.ZERO.setScale(2), BigDecimal::add)
+        );
     }
 
     @Override
@@ -128,6 +131,9 @@ public class DefaultFoodDeliveryService implements FoodDeliveryService {
         if (cart == null || cart.getOrderItems() == null || cart.getOrderItems().isEmpty())
             throw new IllegalStateException("Empty card");
 
+        if (customer.getBalance().compareTo(cart.getPrice()) < 0)
+            throw new LowBalanceException("");
+
         Order newOrder = new Order();
         newOrder.setCustomer(customer);
         newOrder.setPrice(cart.getPrice());
@@ -143,7 +149,7 @@ public class DefaultFoodDeliveryService implements FoodDeliveryService {
         Order savedOrder = orderRepository.save(newOrder);
 
         cart.setOrderItems(new ArrayList<>());
-        cart.setPrice(BigDecimal.ZERO);
+        cart.setPrice(BigDecimal.ZERO.setScale(2));
 
         return savedOrder;
     }
