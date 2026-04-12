@@ -1,0 +1,4 @@
+https://www.youtube.com/watch?v=HXV3zeQKqGY
+
+https://www.geeksforgeeks.org/sql/sql-transactions/
+https://www.geeksforgeeks.org/dbms/acid-properties-in-dbms/
